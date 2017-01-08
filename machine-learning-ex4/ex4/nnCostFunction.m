@@ -74,7 +74,20 @@ for i = 1: m,
     res += -recodeY' * log(h) - (1 - recodeY') * log(1 - h);
 end;
 
-J = res / m;
+reCost1 = 0.0;
+reCost2 = 0.0;
+for j = 1: size(Theta1, 1),
+    for k = 2: size(Theta1, 2),
+        reCost1 += Theta1(j, k) ^ 2;
+    end;
+end;
+for j = 1: size(Theta2, 1),
+    for k = 2: size(Theta2, 2),
+        reCost2 += Theta2(j, k) ^ 2;
+    end;
+end;
+
+J = res / m + (lambda / (2*m)) * (reCost1 + reCost2);
 % -------------------------------------------------------------
 
 % =========================================================================
