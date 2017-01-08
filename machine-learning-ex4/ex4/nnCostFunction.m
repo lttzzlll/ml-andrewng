@@ -64,14 +64,19 @@ Theta2_grad = zeros(size(Theta2));
 
 res = 0.0;
 for i = 1: m,
-    a1 = [1 X(i, :)]; % 1 * 401
-    z2 = Theta1 * a1'; % (25 * 401) * (401 * 1) = 25 * 1
+    a1 = [1; X(i, :)']; % 401 * 1
+    z2 = Theta1 * a1; % (25 * 401) * (401 * 1) = 25 * 1
     a2 = [1; sigmoid(z2)]; % 26 * 1
     z3 = Theta2 * a2; % (10 * 26) * (26 * 1) = 10 * 1
     a3 = sigmoid(z3); % 10 * 1
     h = a3; % 10 * 1
-    recodeY = [zeros(y(i) - 1, 1); 1; zeros(num_labels - y(i), 1)];
+    recodeY = [zeros(y(i) - 1, 1); 1; zeros(num_labels - y(i), 1)]; % 10 * 1
     res += -recodeY' * log(h) - (1 - recodeY') * log(1 - h);
+
+    delta3 = a3 - recodeY; % 10 * 1
+    delta2 = (Theta2' * delta3)(2: end) .* sigmoidGradient(z2); % (25*10) * (10*1) = 25*1 .* 25*1
+    Theta2_grad += delta3 * (a2)'; % (10*1) * (1*26) = 10 * 26
+    Theta1_grad += delta2 * (a1)'; % (25*1) * (1*401) = 25 * 401
 end;
 
 reCost1 = 0.0;
@@ -88,6 +93,10 @@ for j = 1: size(Theta2, 1),
 end;
 
 J = res / m + (lambda / (2*m)) * (reCost1 + reCost2);
+
+Theta1_grad = Theta1_grad ./ m + (lambda/m) * [zeros(size(Theta1, 1), 1) Theta1(:, 2: end)];
+Theta2_grad = Theta2_grad ./ m + (lambda/m) * [zeros(size(Theta2, 1), 1) Theta2(:, 2: end)];
+
 % -------------------------------------------------------------
 
 % =========================================================================
