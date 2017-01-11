@@ -218,3 +218,47 @@ end
 
 fprintf('Program paused. Press enter to continue.\n');
 pause;
+
+% 3.4 Computing test set error
+
+best_lambda = 0;
+minist_err = 9999999;
+for i = 1: length(lambda_vec),
+    if(error_val(i) < minist_err),
+        minist_err = error_val(i);
+        best_lambda = lambda_vec(i);
+    end;
+end;
+
+% training set
+[theta] = trainLinearReg(X_poly, y, best_lambda);
+fprintf('trainig theta: %f\n', theta);
+% cross validation set
+[cv_err, _] = linearRegCostFunction(X_poly_val, yval, theta, 0);
+% test set
+[test_err, _] = linearRegCostFunction(X_poly_test, ytest, theta, 0);
+% print error
+fprintf("best lambda: %f, minist error on cv set: %f\n", best_lambda, cv_err);
+fprintf("best lambda: %f, minist error on test set: %f\n", best_lambda, test_err);
+
+% Optional exercise: Plotting learning curves with randomly select examples
+
+%lambda = 0.01;
+%avg_train_err = 0;
+%avg_cv_err = 0;
+%iter_num = 50;
+%sel_num = 10;
+%train_err = zeros(iter_num, 1);
+%cv_err = zeros(iter_num, 1);
+
+%rand_indices = randperm(size(X_poly, 1));
+%sel_rows = rand_indices(1: sel_num);
+
+%for i = 1: iter_num,
+%    learningCurve(X_poly(sel_rows, :), y(sel_rows, :), ...
+%        X_poly_val(sel_rows, :), yval(sel_rows, :), lambda);
+%end;
+
+%avg_train_err = mean(train_err);
+%avg_cv_err = mean(cv_err);
+%fprintf("%0.f, %0.f\n", avg_train_err, avg_cv_err);
