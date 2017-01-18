@@ -49,7 +49,7 @@ fprintf('\nRunning PCA on example dataset.\n\n');
 [X_norm, mu, sigma] = featureNormalize(X);
 
 %  Run PCA
-[U, S] = pca(X_norm);
+[U, S] = pca(X_norm); % U: (n*n) S: (n*n)
 
 %  Compute mu, the mean of the each feature
 
@@ -84,11 +84,11 @@ axis([-4 3 -4 3]); axis square
 
 %  Project the data onto K = 1 dimension
 K = 1;
-Z = projectData(X_norm, U, K);
+Z = projectData(X_norm, U, K); % n * k
 fprintf('Projection of the first example: %f\n', Z(1));
 fprintf('\n(this value should be about 1.481274)\n\n');
 
-X_rec  = recoverData(Z, U, K);
+X_rec  = recoverData(Z, U, K); % Z: (n*k) U: (n*n)
 fprintf('Approximation of the first example: %f %f\n', X_rec(1, 1), X_rec(1, 2));
 fprintf('\n(this value should be about  -1.047419 -1.047419)\n\n');
 
@@ -110,7 +110,7 @@ pause;
 fprintf('\nLoading face dataset.\n\n');
 
 %  Load Face dataset
-load ('ex7faces.mat')
+load ('ex7faces.mat'); % 5000 * 1024
 
 %  Display the first 100 faces in the dataset
 displayData(X(1:100, :));
@@ -127,10 +127,10 @@ fprintf(['\nRunning PCA on face dataset.\n' ...
 
 %  Before running PCA, it is important to first normalize X by subtracting 
 %  the mean value from each feature
-[X_norm, mu, sigma] = featureNormalize(X);
+[X_norm, mu, sigma] = featureNormalize(X); % X_norm: (5000 * 1024)
 
 %  Run PCA
-[U, S] = pca(X_norm);
+[U, S] = pca(X_norm); % U: 1024 * 1024  S: 1024 * 1024
 
 %  Visualize the top 36 eigenvectors found
 displayData(U(:, 1:36)');
@@ -145,7 +145,7 @@ pause;
 fprintf('\nDimension reduction for face dataset.\n\n');
 
 K = 100;
-Z = projectData(X_norm, U, K);
+Z = projectData(X_norm, U, K); % n * k
 
 fprintf('The projected data Z has a size of: ')
 fprintf('%d ', size(Z));
