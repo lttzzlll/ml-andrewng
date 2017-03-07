@@ -87,7 +87,7 @@ fprintf('Running gradient descent ...\n');
 
 % Choose some alpha value
 alpha = 0.01;
-% Note: 5508 is the smallest number that the price prediction result is equal with normal equation
+% Note: 5508 is the smallest number that the price prediction result is equal to normal equation
 num_iters = 5508; % Increntment the iterations to obtain a more accurate result
 
 % Init Theta and Run Gradient Descent 
