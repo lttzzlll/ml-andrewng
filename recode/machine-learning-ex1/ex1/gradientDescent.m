@@ -17,10 +17,10 @@ for iter = 1:num_iters
     %       of the cost function (computeCost) and gradient here.
     %
 
-
-
-
-
+    h = X * theta; 
+    res = h - y;
+    derivative = (alpha/m) * (X' * res);
+    theta = theta - derivative;
 
 
     % ============================================================
