@@ -62,24 +62,31 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
+Theta1Reg = Theta1(:, 2: end);
+Theta2Reg = Theta2(:, 2: end);
 
+% Feedforward propagation
+a1 = [ones(m, 1) X]; % m * (input_layer_size + 1)
+z2 = a1 * Theta1'; % m * hidden_layer_size
+a2 = [ones(m, 1) sigmoid(z2)]; % m * (hidden_layer_size + 1)
+z3 = a2 * Theta2'; % m * num_labels
+a3 = sigmoid(z3); % m * num_labels
 
+[_, p] = max(a3, [], 2);
 
+% Compute cost    
+for idx = 1: m,
+    for k = 1: num_labels,
+        h = a3(idx, k);
+        res = (y(idx) == k) * log(h) + (1 - (y(idx) == k)) * log(1 - h);
+        J += res;
+    end;
+end;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+reg1 = sum(sum((Theta1Reg .* Theta1Reg)));
+reg2 = sum(sum((Theta2Reg .* Theta2Reg)));
+reg = (lambda / (2*m)) * (reg1 + reg2);
+J = J / (-m) + reg;
 % -------------------------------------------------------------
 
 % =========================================================================
