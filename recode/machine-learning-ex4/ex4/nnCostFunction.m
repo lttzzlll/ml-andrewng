@@ -27,8 +27,8 @@ m = size(X, 1);
          
 % You need to return the following variables correctly 
 J = 0;
-Theta1_grad = zeros(size(Theta1));
-Theta2_grad = zeros(size(Theta2));
+Theta1_grad = zeros(size(Theta1)); % hidden_layer_size * (input_layer_size + 1) 
+Theta2_grad = zeros(size(Theta2)); % num_labels * (hidden_layer_size + 1)
 
 % ====================== YOUR CODE HERE ======================
 % Instructions: You should complete the code by working through the
@@ -62,8 +62,8 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
-Theta1Reg = Theta1(:, 2: end);
-Theta2Reg = Theta2(:, 2: end);
+Theta1Reg = Theta1(:, 2: end); % hidden_layer_size * input_layer_size
+Theta2Reg = Theta2(:, 2: end); % num_labels * hidden_layer_size
 
 % Feedforward propagation
 a1 = [ones(m, 1) X]; % m * (input_layer_size + 1)
@@ -75,18 +75,36 @@ a3 = sigmoid(z3); % m * num_labels
 [_, p] = max(a3, [], 2);
 
 % Compute cost    
-for idx = 1: m,
-    for k = 1: num_labels,
-        h = a3(idx, k);
-        res = (y(idx) == k) * log(h) + (1 - (y(idx) == k)) * log(1 - h);
-        J += res;
-    end;
+% for idx = 1: m,
+%     for k = 1: num_labels,
+%         h = a3(idx, k);
+%         res = (y(idx) == k) * log(h) + (1 - (y(idx) == k)) * log(1 - h);
+%         J += res;
+%     end;
+% end;
+
+% Compute cost: promotion
+for k = 1: num_labels,
+    h = a3(:, k);
+    res = (y == k) .* log(h) + (1 - (y == k)) .* log(1 - h);
+    J += sum(res);
 end;
 
+% Regularization
 reg1 = sum(sum((Theta1Reg .* Theta1Reg)));
 reg2 = sum(sum((Theta2Reg .* Theta2Reg)));
 reg = (lambda / (2*m)) * (reg1 + reg2);
+
 J = J / (-m) + reg;
+% Backpropagation
+Y = zeros(m, num_labels);
+for k = 1: m,
+    Y(k, y(k)) = 1;
+end;
+delta3 = a3 - Y; % m * num_labels
+delta2 = (delta3 * Theta2Reg) .* sigmoidGradient(z2); % m * hidden_layer_size
+Theta2_grad = (delta3' * a2) ./ m + (lambda/m) * [zeros(num_labels, 1) Theta2Reg]; % (num_labels*m) * (m*(hidden_layer_size+1)) = num_labels * (hidden_layer_size+1)
+Theta1_grad = (delta2' * a1) ./ m + (lambda/m) * [zeros(hidden_layer_size, 1) Theta1Reg]; % (hidden_layer_size*m) * (m*(input_layer_size+1)) = hidden_layer_size * (input_layer_size+1)
 % -------------------------------------------------------------
 
 % =========================================================================
