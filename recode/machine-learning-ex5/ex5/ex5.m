@@ -134,6 +134,7 @@ p = 8;
 
 % Map X onto Polynomial Features and Normalize
 X_poly = polyFeatures(X, p);
+
 [X_poly, mu, sigma] = featureNormalize(X_poly);  % Normalize
 X_poly = [ones(m, 1), X_poly];                   % Add Ones
 
@@ -164,7 +165,7 @@ pause;
 %  lambda to see how the fit and learning curve change.
 %
 
-lambda = 0;
+lambda = 1;
 [theta] = trainLinearReg(X_poly, y, lambda);
 
 % Plot training data and fit
@@ -218,3 +219,25 @@ end
 
 fprintf('Program paused. Press enter to continue.\n');
 pause;
+
+% 3.4 Computing test set eror
+
+best_lambda = 0;
+minist_err = 9999999;
+for k = 1: length(lambda_vec),
+    if (error_val(k) < minist_err),
+        minist_err = error_val(k);
+        best_lambda = lambda_vec(k);
+    end;
+end;
+
+% training set
+[theta] = trainLinearReg(X_poly, y, best_lambda);
+fprintf('training theta: %f\n', theta);
+% cross validation set
+[cv_err, _] = linearRegCostFunction(X_poly_val, yval, theta, 0);
+% test error
+[test_err, _] = linearRegCostFunction(X_poly_test, ytest, theta, 0);
+% print erorr
+fprintf('best lambda: %f, minist error on cv set: %f\n', best_lambda, cv_err);
+fprintf('best lambda: %f, minist error on test set: %f\n', best_lambda, test_err);    
